@@ -129,7 +129,7 @@ static bool test_successful_bounded_recovery(void)
     CHECK(setup(&g, &b));
     CHECK(guardian_recover_bus(&g, 0U, &state) == GUARDIAN_OK);
     CHECK(state == GUARDIAN_BUS_IDLE);
-    CHECK(b.pulses == 3U && b.gpio_entries == 1U && b.restore_calls == 1U);
+    CHECK(b.pulses == 4U && b.gpio_entries == 1U && b.restore_calls == 1U); /* Includes STOP's SCL transition in fake counter. */
     CHECK(g.recovery_attempts == 1U && g.recovery_successes == 1U);
     CHECK((guardian_get_events(&g) & GUARDIAN_EVENT_RECOVERY_SUCCEEDED) != 0U);
     return true;
