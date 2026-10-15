@@ -1,0 +1,36 @@
+cmake_minimum_required(VERSION 3.16)
+project(stm32_i2c_bus_guardian VERSION 1.0.0 LANGUAGES C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+
+option(GUARDIAN_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+
+add_library(guardian STATIC src/guardian.c)
+target_include_directories(guardian PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_executable(guardian_sim simulator/main.c)
+target_link_libraries(guardian_sim PRIVATE guardian)
+
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(test_guardian tests/test_guardian.c)
+    target_link_libraries(test_guardian PRIVATE guardian)
+    add_test(NAME guardian_unit_tests COMMAND test_guardian)
+endif()
+
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    foreach(target guardian guardian_sim)
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+        if(GUARDIAN_WARNINGS_AS_ERRORS)
+            target_compile_options(${target} PRIVATE -Werror)
+        endif()
+    endforeach()
+    if(BUILD_TESTING)
+        target_compile_options(test_guardian PRIVATE -Wall -Wextra -Wpedantic)
+        if(GUARDIAN_WARNINGS_AS_ERRORS)
+            target_compile_options(test_guardian PRIVATE -Werror)
+        endif()
+    endif()
+endif()
