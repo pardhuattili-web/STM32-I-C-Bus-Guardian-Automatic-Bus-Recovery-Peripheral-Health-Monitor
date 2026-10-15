@@ -1,0 +1,12 @@
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Testing/
+*.o
+*.a
+*.elf
+*.hex
+*.bin
+.vscode/
+.idea/
